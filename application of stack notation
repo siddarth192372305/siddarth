@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#define MAX_STACK_SIZE 100
+typedef struct {
+int top;
+double items[MAX_STACK_SIZE];
+} Stack;
+void push(Stack *s, double value) {
+if (s->top == MAX_STACK_SIZE - 1) {
+printf("Stack overflow\n");
+exit(EXIT_FAILURE);
+} else {
+s->items[++(s->top)] = value;
+}
+}
+double pop(Stack *s) {
+if (s->top == -1) {
+printf("Stack underflow\n");
+exit(EXIT_FAILURE);
+} else {
+return s->items[(s->top)--];
+}
+}
+int main() {
+Stack stack = { .top = -1 };
+char expression[] = "52*3+";
+int i = 0;
+while (expression[i] != '\0') {
+if (isdigit(expression[i])) {
+push(&stack, expression[i] - '0');
+} else {
+double operand2 = pop(&stack);
+double operand1 = pop(&stack);
+switch (expression[i]) {
+case '+':
+push(&stack, operand1 + operand2);
+break;
+case '-':
+push(&stack, operand1 - operand2
+break;
+case '*':
+push(&stack, operand1 * operand2);
+break;
+case '/':
+push(&stack, operand1 / operand2)
+break;
+default:
+printf("Invalid expression\n");
+exit(EXIT_FAILURE);
+}
+}
+i++;
+}
+printf("Result: %.2f\n", pop(&stack));
+return 0;
+}
+output:Result: 13.00
+

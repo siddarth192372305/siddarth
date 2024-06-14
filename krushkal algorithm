@@ -1,0 +1,97 @@
+#include <stdio.h>
+
+#define V 4 // number of vertices
+#define E 5 // number of edges
+
+typedef struct Edge {
+    int src, dest, weight;
+} Edge;
+
+typedef struct Graph {
+    Edge edge[E];
+} Graph;
+
+void printArray(int arr[], int size) {
+    for (int i = 0; i < size; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int find(int parent[], int i) {
+    if (parent[i] == -1) {
+        return i;
+    }
+    return find(parent, parent[i]);
+}
+
+void Union(int parent[], int x, int y) {
+    int xset = find(parent, x);
+    int yset = find(parent, y);
+    parent[xset] = yset;
+}
+
+void kruskalMST(Graph graph) {
+    int parent[V];
+    for (int i = 0; i < V; i++) {
+        parent[i] = -1;
+    }
+
+    Edge result[E];
+    int i = 0, e = 0;
+
+    // sort edges in non-decreasing order of their weight
+    for (int i = 0; i < E; i++) {
+        for (int j = i + 1; j < E; j++) {
+            if (graph.edge[i].weight > graph.edge[j].weight) {
+                Edge temp = graph.edge[i];
+                graph.edge[i] = graph.edge[j];
+                graph.edge[j] = temp;
+            }
+        }
+    }
+
+    // pick minimum weight edge and include it in MST
+    while (e < V - 1) {
+        Edge next_edge = graph.edge[i++];
+        int x = find(parent, next_edge.src);
+        int y = find(parent, next_edge.dest);
+
+        if (x!= y) {
+            result[e++] = next_edge;
+            Union(parent, x, y);
+        }
+    }
+
+    printf("Edges in MST:\n");
+    for (i = 0; i < e; i++) {
+        printf("%d -- %d == %d\n", result[i].src, result[i].dest, result[i].weight);
+    }
+}
+
+int main() {
+    Graph graph;
+    graph.edge[0].src = 0;
+    graph.edge[0].dest = 1;
+    graph.edge[0].weight = 10;
+
+    graph.edge[1].src = 0;
+    graph.edge[1].dest = 2;
+    graph.edge[1].weight = 6;
+
+    graph.edge[2].src = 0;
+    graph.edge[2].dest = 3;
+    graph.edge[2].weight = 5;
+
+    graph.edge[3].src = 1;
+    graph.edge[3].dest = 3;
+    graph.edge[3].weight = 15;
+
+    graph.edge[4].src = 2;
+    graph.edge[4].dest = 3;
+    graph.edge[4].weight = 4;
+
+    kruskalMST(graph);
+
+    return 0;
+}
